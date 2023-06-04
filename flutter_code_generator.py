@@ -241,6 +241,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/controller/{word}_cubit.dart';
 import '../../data/controller/{word}_state.dart';
+final _{word}Cubit = getIt<{word.capitalize()}Cubit>();
 class {word.capitalize()}sScreen extends StatelessWidget {{
   @override
   Widget build(BuildContext context) {{
@@ -250,9 +251,12 @@ class {word.capitalize()}sScreen extends StatelessWidget {{
       ),
       body: BlocBuilder<{word.capitalize()}Cubit, {word.capitalize()}State>(
         builder: (context, state) {{
-          return state.when(
-            loading: () => Center(child: CircularProgressIndicator()),
-            loaded: ({word}s) {{
+          return state.maybeWhen(
+            orElse: () {{
+              return SizedBox.shrink();
+            }},
+            {word}Loading: () => Center(child: CircularProgressIndicator()),
+            {word}Loaded: ({word}s) {{
               return ListView.builder(
                 itemCount: {word}s.length,
                 itemBuilder: (context, index) {{
@@ -280,7 +284,7 @@ class {word.capitalize()}sScreen extends StatelessWidget {{
                 }},
               );
             }},
-            error: (message) => Center(child: Text('Failed to load {word}s')),
+            {word}Error: (message) => Center(child: Text('Failed to load {word}s')),
           );
         }},
       ),
@@ -315,7 +319,7 @@ class {word.capitalize()}sScreen extends StatelessWidget {{
                 labelText: '{word.capitalize()} Name',
               ),
               onSaved: (value) {{
-                _{word}Cubit.add{word.capitalize()}({word.capitalize()}(name: value!));
+                _{word}Cubit.add{word.capitalize()}({word.capitalize()}Body(name: value!));
               }},
             ),
           ),
@@ -364,7 +368,7 @@ class {word.capitalize()}sScreen extends StatelessWidget {{
                 labelText: '{word.capitalize()} Name',
               ),
               onSaved: (value) {{
-                _{word}Cubit.update{word.capitalize()}({word}.id, {word.capitalize()}(id: {word}.id, name: value!));
+                _{word}Cubit.update{word.capitalize()}({word}.id, {word.capitalize()}Body( name: value!));
               }},
             ),
           ),
@@ -444,6 +448,7 @@ def main():
             file.write(f"""
 import 'package:freezed_annotation/freezed_annotation.dart';
 part '{word}.g.dart';
+part '{word}.freezed.dart';
 @freezed
 class {word.capitalize()} with _${word.capitalize()}{"{"}
   const factory {word.capitalize()}() = _{word.capitalize()};
@@ -456,6 +461,8 @@ class {word.capitalize()} with _${word.capitalize()}{"{"}
             file.write(f"""
 import 'package:freezed_annotation/freezed_annotation.dart';
 part '{word}_body.g.dart';
+part '{word}_body.freezed.dart';
+
 @freezed
 class {word.capitalize()}Body with _${word.capitalize()}Body{"{"}
   const factory {word.capitalize()}Body() = _{word.capitalize()}Body;
